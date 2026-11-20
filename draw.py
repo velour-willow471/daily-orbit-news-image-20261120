@@ -253,10 +253,46 @@ def main():
         brief_bottom = max(brief_bottom, byy)
     y = brief_bottom + 2
     rule(d, y, thick=1)
+    y += 10
+
+    # ---- editor's note + today in numbers (fills the foot of the page) ----
+    note_w = 600
+    d.text((28, y), "FROM THE EDITOR", font=F(SANS_BOLD, 9), fill=RED)
+    ny = y + 14
+    ny = para(d, 28, ny,
+              "One day, held still. A climate deal that lost its centre, "
+              "three rivals smiling in Shenzhen, drones over Ukraine, tankers "
+              "under fire in Hormuz \u2014 and, in Cincinnati, a city mourning "
+              "a hippo. That was Friday, 20 November 2026.",
+              F(SERIF_IT, 11), note_w, 15, fill=(50, 48, 44))
+    # simple ship icon beside the note
+    sx, sy = 470, ny + 6
+    d.polygon([(sx, sy + 18), (sx + 90, sy + 18), (sx + 76, sy + 30),
+               (sx + 14, sy + 30)], outline=BLUE, width=2)
+    d.rectangle([sx + 30, sy, sx + 60, sy + 18], outline=BLUE, width=2)
+    d.text((sx + 4, sy + 36), "Hormuz: tankers under fire",
+           font=F(SERIF_IT, 8), fill=GREY)
+    # numbers panel on the right
+    px0 = 652
+    d.rectangle([px0, y, 996, y + 92], outline=INK, width=1)
+    d.rectangle([px0, y, 996, y + 20], fill=RED)
+    d.text((px0 + 8, y + 4), "TODAY IN NUMBERS", font=F(SANS_BOLD, 10), fill=PAPER)
+    nums = [
+        "880,000  AI chips approved for Chinese firms",
+        "51\u201348  Senate vote on Iran war powers",
+        "1st  US deep-sea mining leases ever auctioned",
+        "2030  Meta net-zero target now in doubt",
+    ]
+    nyy = y + 26
+    for n in nums:
+        d.text((px0 + 10, nyy), n, font=F(SANS_REG, 10), fill=INK)
+        nyy += 16
+    y = max(ny, y + 92) + 10
+    rule(d, y, thick=2)
     y += 8
 
-    # ---- markets & weather ticker ----
-    d.rectangle([28, y, 996, 1024 - 28], fill=(30, 30, 30))
+    # ---- markets & weather ticker (compact strip, not a void) ----
+    d.rectangle([28, y, 996, y + 104], fill=(30, 30, 30))
     d.text((40, y + 8), "MARKETS", font=F(SANS_BOLD, 10), fill=(240, 200, 90))
     d.text((40, y + 26),
            "OIL  Slides as Hormuz risk rises  •  ANTHROPIC  Soars on debut  •  "
@@ -271,6 +307,13 @@ def main():
            "The Daily Orbit  •  Friday, 20 November 2026  •  One day. One page. "
            "Every story above happened today.",
            font=F(SERIF_IT, 9), fill=(190, 185, 170))
+    y += 116
+    rule(d, y, thick=3)
+    d.text((28, y + 6), "THE DAILY ORBIT  •  Printed for the record  •  "
+           "Friday, 20 November 2026", font=F(SANS_REG, 9), fill=GREY)
+    end = "END OF FRONT PAGE"
+    d.text((996 - d.textlength(end, font=F(SANS_REG, 9)), y + 6), end,
+           font=F(SANS_REG, 9), fill=GREY)
 
     out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "entry.png")
     img.save(out, format="PNG", optimize=True)
